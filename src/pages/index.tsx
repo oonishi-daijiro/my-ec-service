@@ -1,40 +1,67 @@
 import React from "react";
-import { Product, defaultProduct } from "../product";
+import { Product, defaultProduct, getAllProducts } from "../product";
 import { useRouter } from "next/router";
-import { read } from "fs";
+import '@/styles/style.module.css';
+import styles from '@/styles/style.module.css';
 
 
-const ctxProducts = React.createContext<Product[]>([defaultProduct]);
+
+class SuspenseResource<T> {
+  constructor(resourceFetcher: () => Promise<T>, defaultData: T) {
+    this.resouseFetcher = resourceFetcher
+    this.data = defaultData
+    this.setFetcher()
+  }
+  read(): T {
+    switch (this.stat) {
+      case 'pending':
+        throw this.promise
+      case 'fullfilled':
+        return this.data
+      case 'rejected':
+        return this.data
+    }
+  }
+
+  reLoad(): void {
+    this.stat = 'pending'
+    this.setFetcher()
+  }
+
+  private setFetcher() {
+    this.promise = this.resouseFetcher().then(data => {
+      this.data = data
+      this.stat = 'fullfilled'
+    }).catch(() => {
+      this.stat = 'rejected'
+    })
+  }
+
+  private stat: 'pending' | 'fullfilled' | 'rejected' = 'pending'
+  private data: T
+  private resouseFetcher: () => Promise<T>
+  private promise: Promise<void>
+
+}
+
+
+const sAllProducts = new SuspenseResource<Product[]>(getAllProducts, [defaultProduct]);
 
 export default function Index() {
-  return <><Order></Order></>;
-}
-
-const Order: React.FC = () => {
-  return <button onClick={
-    () => {
-      const orderPromise = fetch('/api/order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name: "changed name" })
-      })
-      orderPromise.then(async e => {
-        const res = await (await fetch('/api/get-all-products', {
-          method: 'GET',
-        })).json();
-        console.log(res);
-
-
-
-      })
-    }} >order</button>
-}
-
-const Header: React.FC = () => {
   return (
-    <div id="header">
+    <>
+      <Header />
+      <React.Suspense fallback={<>ロード中</>}>
+        <Result filterFunc={() => true} />
+      </React.Suspense>
+    </>
+  );
+}
+
+
+export const Header: React.FC = () => {
+  return (
+    <div id={styles.header}>
       <Logo />
       <Search />
       <WebSiteDescription />
@@ -42,11 +69,16 @@ const Header: React.FC = () => {
   );
 }
 
-const Result: React.FC = () => {
-  return <></>
+export const Result: React.FC<{ filterFunc: (p: Product) => boolean }> = (props) => { // this component is suspense
+  const allProducts = sAllProducts.read();
+  return <div id={styles.resultWrapper}>{allProducts.filter(props.filterFunc).map(e => <ProductThumbnail {...e} />)}</div>
 }
 
 const ProductThumbnail: React.FC<Product> = (props) => {
+  return <ProductThmubnailPicture {...props} />
+}
+
+const ProductThmubnailPicture: React.FC<Product> = (props) => {
   return <>
     <p>{props.name}</p>
     <p>{props.description}</p>
@@ -58,25 +90,39 @@ const ProductThumbnail: React.FC<Product> = (props) => {
 
 const WebSiteDescription: React.FC = () => {
   return (
-    <div suppressHydrationWarning={true} id="websiteDescription">※このサイトは授業の課題で作成したサイトです．サイト内の商品は一切購入することができません．</div>
+    <div suppressHydrationWarning={true} id={styles.webSiteDescription}>※このサイトは授業の課題で作成したサイトです．サイト内の商品は一切購入することができません．</div>
   )
 };
 
 const Logo: React.FC = () => {
-  return <img src="/logo.svg" id="logo"></img>
+  return <div draggable="false" id={styles.logoWrapper}><img src="/logo.svg" id={styles.logo}></img></div>
 }
 
 const Search: React.FC = () => {
-  const [textInput, editableTextInput] = useEditableTextInput({ value: "" });
+  const [textInput, editableTextInput] = useEditableTextInput({ value: "", placeholder: "商品を検索", id: styles.search });
   const router = useRouter();
-
-  return <form onSubmit={e => {
-    e.preventDefault()
-    router.push(`/search/${textInput}`);
-  }
-  }><>{editableTextInput}</></form>;
+  return (
+    <div id={styles.searchWrapper} className={styles.noDefaultStyle}>
+      <form id={styles.formSearch}
+        onSubmit={e => {
+          e.preventDefault()
+          router.push(`/search/${textInput}`);
+        }
+        }>
+        <>{editableTextInput}</>
+      </form>
+      <FontAwesomeIcon name="search" id={styles.searchIcon} />
+    </div>
+  );
 }
 
+const Icons = {
+  search: "fa-solid fa-magnifying-glass"
+} as const;
+
+const FontAwesomeIcon: React.FC<{ name: keyof typeof Icons } & React.ComponentProps<'i'>> = (props) => {
+  return <i {...props} className={`${props.className ?? ""} ${Icons[props.name]}`}></i>
+}
 
 function useEditableTextInput(props: React.ComponentProps<'input'> = {}): [React.ComponentProps<'input'>['value'], React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>] {
   const [textInput, setTextInput] = React.useState(props.value ?? "");

@@ -1,5 +1,68 @@
-#header{};
-#websiteDescription{};
-#logo{};
+.noDefaultStyle {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  appearance: none;
+  font-weight: bold;
+}
 
+#header {
+  width: 100vw;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  border-bottom: solid 1px #414141;
+}
 
+#logo {
+  height: 120px;
+  user-select: none;
+  -webkit-user-drag: none;
+  cursor: pointer;
+}
+#webSiteDescription {
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  color: #414141;
+  padding-left: 40px;
+  width: 40%;
+  overflow-wrap: break-word;
+  user-select: none;
+}
+
+#resultWrapper {
+}
+#logoWrapper {
+}
+
+#search {
+  font-family: "Noto Sans JP", sans-serif;
+  border: solid 1px #414141;
+  border-radius: 12px;
+  width: 101%;
+  height: 50px;
+  padding: 0;
+  padding-left: 15px;
+}
+#search:focus {
+  outline: none;
+}
+#formSearch {
+  width: 100%;
+}
+
+#searchWrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+#searchIcon {
+  color: #414141;
+  font-size: 120%;
+}

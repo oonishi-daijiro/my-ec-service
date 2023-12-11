@@ -1,1 +1,8 @@
-{"stock":[{"name":"hoge","stock":98}]}
+{
+   "stock":
+   [
+      {
+         "name":"hoge","stock":98
+         }
+         ]
+      }

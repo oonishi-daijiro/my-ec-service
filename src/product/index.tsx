@@ -16,6 +16,14 @@ export const defaultProduct: Product = {
 
 export const Products: Product[] = [defaultProduct];
 
-export function getThumbnailPath(id: number): string { return "" };
-export function getProducts(): Product[] { return [] };
+import product from "./products.json";
 
+export async function getAllProducts(): Promise<Product[]> {
+   return product.AllProducts;
+};
+
+export async function orderProduct(id: number, stockCount: number): Promise<void> {
+   product.AllProducts.find(e => e.id === id).stock -= stockCount;
+}
+
+export function getThumbnailPath(id: number): string { return "" };

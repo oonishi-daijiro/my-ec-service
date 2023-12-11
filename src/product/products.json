@@ -1,0 +1,11 @@
+{
+  "AllProducts": [
+    {
+      "name": "TOMATO",
+      "price": 100,
+      "stock": 100,
+      "description": "flesh tomato",
+      "id": 0
+    }
+  ]
+}
