@@ -1,11 +1,10 @@
 import React from "react";
 import { Product, defaultProduct } from "../product";
 import { useRouter } from "next/router";
+import { read } from "fs";
 
 
 const ctxProducts = React.createContext<Product[]>([defaultProduct]);
-
-
 
 export default function Index() {
   return <><Order></Order></>;
@@ -21,8 +20,14 @@ const Order: React.FC = () => {
         },
         body: JSON.stringify({ name: "changed name" })
       })
-      orderPromise.then(e => {
-        console.log("Fetch end:", e);
+      orderPromise.then(async e => {
+        const res = await (await fetch('/api/get-all-products', {
+          method: 'GET',
+        })).json();
+        console.log(res);
+
+
+
       })
     }} >order</button>
 }
