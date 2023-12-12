@@ -1,11 +1,28 @@
 {
   "AllProducts": [
     {
-      "name": "TOMATO",
+      "name": "トマト",
       "price": 100,
+      "stock": 1,
+      "description": "ナウでヤングなミニトマト",
+      "id": 0,
+      "keywords": ["トマト", "とめいと", "やさい", "野菜"]
+    },
+    {
+      "name": "iPhone 15 PRO max",
+      "price": 15000,
       "stock": 100,
-      "description": "flesh tomato",
-      "id": 0
+      "description": "現代最強の携帯",
+      "id": 1,
+      "keywords": ["スマホ", "アイフォン", "iphone", "15"]
+    },
+    {
+      "name": "surface pro max",
+      "price": 150000,
+      "stock": 100,
+      "description": "ノートパソコン",
+      "id": 2,
+      "keywords": ["サーフェイス", "パソコン", "intel", "ノートパソコン"]
     }
   ]
 }

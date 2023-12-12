@@ -1,6 +1,6 @@
 import React from "react";
-import { Product, defaultProduct, getAllProducts } from "../product";
-import { useRouter } from "next/router";
+import { Product, defaultProduct, getAllProducts, getThumbnailPicturePath } from "../product";
+import Next, { useRouter } from "next/router";
 import '@/styles/style.module.css';
 import styles from '@/styles/style.module.css';
 
@@ -23,7 +23,7 @@ class SuspenseResource<T> {
     }
   }
 
-  reLoad(): void {
+  reload(): void {
     this.stat = 'pending'
     this.setFetcher()
   }
@@ -45,17 +45,21 @@ class SuspenseResource<T> {
 }
 
 
-const sAllProducts = new SuspenseResource<Product[]>(getAllProducts, [defaultProduct]);
+export const sAllProducts = new SuspenseResource<Product[]>(getAllProducts, [defaultProduct]);
 
 export default function Index() {
   return (
-    <>
+    <div id={styles.pageWrapper}>
       <Header />
-      <React.Suspense fallback={<>ロード中</>}>
-        <Result filterFunc={() => true} />
+      <React.Suspense fallback={<Fallback />}>
+        <ResultWithBound filterFunc={() => true} />
       </React.Suspense>
-    </>
+    </div>
   );
+}
+
+const Fallback: React.FC = () => {
+  return <div id={styles.fallbacl}>ロード中</div>
 }
 
 
@@ -69,22 +73,43 @@ export const Header: React.FC = () => {
   );
 }
 
-export const Result: React.FC<{ filterFunc: (p: Product) => boolean }> = (props) => { // this component is suspense
-  const allProducts = sAllProducts.read();
-  return <div id={styles.resultWrapper}>{allProducts.filter(props.filterFunc).map(e => <ProductThumbnail {...e} />)}</div>
+export const ResultWithBound: React.FC<{ filterFunc: (p: Product) => boolean }> = (props) => { // this component is suspense
+  return (
+    <React.Suspense fallback={<>ロード中</>}>
+      <Result {...props} />
+    </React.Suspense>
+  )
 }
 
-const ProductThumbnail: React.FC<Product> = (props) => {
-  return <ProductThmubnailPicture {...props} />
+const Result: React.FC<{ filterFunc: (p: Product) => boolean }> = (props) => {
+  const allProducts = sAllProducts.read();
+  const filteredProducts = allProducts.filter(props.filterFunc);
+  if (filteredProducts.length === 0) {
+    return (
+      <div id={styles.noResult} className={styles.notoSans}>
+        <FontAwesomeIcon name="noFound" id={styles.iconNoFound}></FontAwesomeIcon>
+        一致する商品は見つかりませんでした
+      </div>
+    )
+  }
+  return <div id={styles.resultWrapper}>{filteredProducts.map((e, index) => <ProductThumbnail {...e} key={index} />)}</div>
+}
+
+const ProductThumbnail: React.FC<Product & { key: number }> = (props) => {
+  const router = useRouter();
+  return (
+    <div className={styles.productThumbnail} onClick={() => router.push(`/detail/${props.id}`)}>
+      <ProductThmubnailPicture {...props} />
+      <div className={styles.productPrice}>{`￥${props.price}`}</div>
+      <div className={styles.productName}>{props.name}</div>
+    </div>
+  )
 }
 
 const ProductThmubnailPicture: React.FC<Product> = (props) => {
+
   return <>
-    <p>{props.name}</p>
-    <p>{props.description}</p>
-    <p>{props.price}</p>
-    <p>{props.stock}</p>
-    <p>{props.id}</p>
+    <img className={styles.productThmubnailPicture} src={getThumbnailPicturePath(props.id)}></img>
   </>
 }
 
@@ -95,7 +120,8 @@ const WebSiteDescription: React.FC = () => {
 };
 
 const Logo: React.FC = () => {
-  return <div draggable="false" id={styles.logoWrapper}><img src="/logo.svg" id={styles.logo}></img></div>
+  const router = useRouter();
+  return <div draggable="false" id={styles.logoWrapper}><img src="/logo.svg" id={styles.logo} onClick={() => router.push('/')} /></div>
 }
 
 const Search: React.FC = () => {
@@ -106,7 +132,7 @@ const Search: React.FC = () => {
       <form id={styles.formSearch}
         onSubmit={e => {
           e.preventDefault()
-          router.push(`/search/${textInput}`);
+          if (textInput !== "") router.push(`/search/${textInput}`);
         }
         }>
         <>{editableTextInput}</>
@@ -117,7 +143,8 @@ const Search: React.FC = () => {
 }
 
 const Icons = {
-  search: "fa-solid fa-magnifying-glass"
+  search: "fa-solid fa-magnifying-glass",
+  noFound: "fa-solid fa-circle-exclamation"
 } as const;
 
 const FontAwesomeIcon: React.FC<{ name: keyof typeof Icons } & React.ComponentProps<'i'>> = (props) => {

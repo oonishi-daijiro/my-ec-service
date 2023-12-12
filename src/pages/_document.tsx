@@ -14,7 +14,7 @@ export default function Document() {
       <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet" />
       <body style={{ margin: 0 }}>
         <Main />
-        
+
         <NextScript />
       </body>
     </Html>
