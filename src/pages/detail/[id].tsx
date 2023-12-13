@@ -1,4 +1,4 @@
-import { Header } from "../index";
+import { Header, numberToString } from "../index";
 import React, { useState } from "react";
 import styles from "@/styles/style.module.css";
 import { Product, defaultProduct, getThumbnailPicturePath, orderProduct } from "../../product"
@@ -26,7 +26,7 @@ const DetailDisplay: React.FC = () => {
    const allProducts = sAllProducts.read();
    const router = useRouter();
    const id = router.query.id ?? -1;
-   const product = (allProducts.find(e => e.id === Number(id))) ?? defaultProduct;
+   const product = (allProducts.find(e => e.id === id)) ?? defaultProduct;
    const [stock, setStock] = React.useState(product.stock);
    const isAvailableToOrder = stock > 0;
    const [shouldStartAnimate, setShouldStartAnimate] = useState(false);
@@ -37,7 +37,7 @@ const DetailDisplay: React.FC = () => {
             <ProductPicture {...product} />
             <div id={styles.detailContentWrapper}>
                <div id={styles.detailDisplayName} className={styles.notoSans}>{product.name}</div>
-               <div id={styles.detailDisplayPrice} className={styles.notoSans}>￥{product.price}円(税抜)</div>
+               <div id={styles.detailDisplayPrice} className={styles.notoSans}>￥{numberToString(product.price)}円(税抜)</div>
                <div id={styles.detailDisplayStock} className={styles.notoSans}>在庫:{stock}個</div>
                <div id={styles.descriptionPrefix} className={styles.notoSans}>・商品の詳細</div>
                <div id={styles.detailDisplayDescription} className={styles.notoSans}>{product.description}</div>
@@ -59,7 +59,7 @@ const DetailDisplay: React.FC = () => {
    )
 }
 
-async function handleOrderProduct(id: number) {
+async function handleOrderProduct(id: string) {
    return orderProduct(id, 1);
 }
 

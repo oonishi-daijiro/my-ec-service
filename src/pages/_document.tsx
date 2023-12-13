@@ -1,10 +1,8 @@
 import { Html, Main, Head, NextScript } from 'next/document'
-import { Header } from '.'
 import { useRouter } from 'next/router'
 
-{/* <link href="../styles/style.css" rel="stylesheet"></link> */ }
-
 export default function Document() {
+
   return (
     <Html lang="ja">
       <Head />

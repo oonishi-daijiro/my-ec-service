@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Product, Products } from "../../product";
+import { Product } from "../../product";
 import { ResultWithBound, Header } from "../index";
 import styles from "@/styles/style.module.css";
 
@@ -18,7 +18,7 @@ export default function Search() {
    }
 
    return (
-      <div id={styles.indexWrapper}>
+      <div id={styles.pageWrapper}>
          <Header />
          <div id={styles.searchWordDisplay}>{`” ${word} ”の検索結果`}</div>
          <ResultWithBound filterFunc={filterFunc} />

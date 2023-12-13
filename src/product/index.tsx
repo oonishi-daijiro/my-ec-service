@@ -1,6 +1,9 @@
+type UUID = string;
+
+
 export interface Product {
    name: string
-   id: number
+   id: UUID
    description: string
    price: number
    stock: number
@@ -9,7 +12,7 @@ export interface Product {
 
 export const defaultProduct: Product = {
    name: "",
-   id: -1,
+   id: "",
    description: "",
    price: 0,
    stock: 0,
@@ -24,12 +27,13 @@ export async function getAllProducts(): Promise<Product[]> {
    return product.AllProducts ?? [];
 };
 
-export async function orderProduct(id: number, stockCount: number): Promise<void> {
+export async function orderProduct(id: UUID, stockCount: number): Promise<void> {
+
    const productIndex = product.AllProducts.findIndex(e => e.id === id);
    product.AllProducts[productIndex].stock -= stockCount;
    return;
 }
 
-export function getThumbnailPicturePath(id: number): string {
-   return `/products-picture/${id}.jpg`;
+export function getThumbnailPicturePath(id: UUID): string {
+   return `/products-picture/${id}.png`;
 };
