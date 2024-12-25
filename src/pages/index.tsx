@@ -3,8 +3,7 @@ import { Product, defaultProduct, getAllProducts, getThumbnailPicturePath } from
 import { useRouter } from "next/router";
 import '@/styles/style.module.css';
 import styles from '@/styles/style.module.css';
-
-
+import * as nextConfig from "../../next.config";
 
 class SuspenseResource<T> {
   constructor(resourceFetcher: () => Promise<T>, defaultData: T) {
@@ -124,7 +123,7 @@ const WebSiteDescription: React.FC = () => {
 
 const Logo: React.FC = () => {
   const router = useRouter();
-  return <div draggable="false" id={styles.logoWrapper}><img src="/logo.svg" id={styles.logo} onClick={() => router.push('/')} /></div>
+  return <div draggable="false" id={styles.logoWrapper}><img src={`${nextConfig.basePath}/logo.svg`} id={styles.logo} onClick={() => router.push('/')} /></div>
 }
 
 const Search: React.FC = () => {

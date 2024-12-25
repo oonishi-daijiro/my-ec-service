@@ -1,5 +1,6 @@
-type UUID = string;
+import * as nextConfig from "../../next.config"
 
+type UUID = string;
 
 export interface Product {
    name: string
@@ -35,5 +36,5 @@ export async function orderProduct(id: UUID, stockCount: number): Promise<void> 
 }
 
 export function getThumbnailPicturePath(id: UUID): string {
-   return `/products-picture/${id}.png`;
+   return `${nextConfig.basePath}/products-picture/${id}.png`;
 };
