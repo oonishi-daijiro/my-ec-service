@@ -1,6 +1,7 @@
 # my-ec-service
 これはプログラミング３の授業で作成したデモのECサイトです．
-
+## リンク
+[こちら](https://oonishi-daijiro.github.io/my-ec-service)でサイトを閲覧できます．
 ## How To Run
 ```
 git clone https://github.com/oonishi-daijiro/my-ec-service && cd my-ec-service
